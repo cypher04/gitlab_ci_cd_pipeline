@@ -12,7 +12,7 @@ resource "azuread_application" "gitlab_app" {
 
 // service principal for the app registration
 resource "azuread_service_principal" "gitlab_sp" {
-  client_id = azuread_application.gitlab_app.id
+  client_id = azuread_application.gitlab_app.client_id
   owners         = [data.azurerm_client_config.current.object_id]
 }
 
@@ -24,5 +24,5 @@ resource "azuread_application_federated_identity_credential" "gitlab_federal_ide
   description                        = "Federated identity for GitLab CI/CD pipeline"
   audiences                          = [var.gitlab_base_url]
   issuer                             = var.gitlab_base_url
-  subject                            = "project_path:/${var.gitlab_namespace}/${var.gitlab_project_name}:ref_type:branch:ref:${var.default_branch}"
+  subject                            = "project_path:${var.gitlab_namespace}/${var.gitlab_project_name}:ref_type:branch:ref:${var.default_branch}"
 }
