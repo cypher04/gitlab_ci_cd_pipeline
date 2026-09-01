@@ -1,5 +1,5 @@
 module "compute" {
-  source              = "../../modules/compute"
+  source = "../../modules/compute"
 
 }
 
