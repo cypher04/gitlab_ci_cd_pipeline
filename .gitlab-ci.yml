@@ -2,6 +2,7 @@ stages:
   - validate
   - plan
   - apply
+  - destroy
 
 variables:
   TF_ROOT: env/dev
