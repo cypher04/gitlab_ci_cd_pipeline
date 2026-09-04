@@ -29,6 +29,7 @@ default:
     - export ARM_CLIENT_ID="$AZURE_CLIENT_ID"
     - export ARM_TENANT_ID="$AZUREAD_TENANT_ID"
     - export ARM_SUBSCRIPTION_ID="$AZURE_SUBSCRIPTION_ID"
+    - export VM_PASSWORD="$VM_PASSWORD"
     - cd "$TF_ROOT"
     - terraform init -input=false
 
@@ -73,7 +74,7 @@ apply:
 
 
 destroy:
-  stage: apply
+  stage: destroy
   extends: .azure
   script:
     - terraform destroy -auto-approve
