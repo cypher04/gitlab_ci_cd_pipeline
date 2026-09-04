@@ -13,7 +13,7 @@ default:
     name: hashicorp/terraform:1.9.8
     entrypoint: [""]          # the image's entrypoint is terraform itself
   cache:
-    key: "$CI_COMMIT_REF_SLUG-$TF_ROOT"
+    key: "$CI_COMMIT_REF_SLUG-$CI_JOB_NAME-$TF_ROOT"
     paths:
       - $TF_ROOT/.terraform
 
