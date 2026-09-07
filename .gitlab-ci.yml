@@ -3,7 +3,7 @@ stages:
   - plan
   - apply
   - destroy
-
+  
 variables:
   TF_ROOT: env/dev
   TF_IN_AUTOMATION: "true"
