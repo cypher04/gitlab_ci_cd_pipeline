@@ -22,5 +22,5 @@ variable "resource_group_name" {
 variable "vm_password" {
   description = "The password for the virtual machines."
   type        = string
-  sensitive = true
+  sensitive   = true
 }
