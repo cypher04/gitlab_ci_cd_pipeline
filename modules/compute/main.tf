@@ -1,3 +1,7 @@
+
+data "azurerm_client_config" "current" {}
+
+
 // resource group configuration
 resource "azurerm_resource_group" "compute-rg" {
   name     = "compute-rg"
