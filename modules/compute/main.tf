@@ -27,7 +27,7 @@ resource "azurerm_linux_virtual_machine" "infra_vm" {
     name                = "infra-vm"
     resource_group_name   = azurerm_resource_group.compute-rg.name
     location              = azurerm_resource_group.compute-rg.location
-    size                  = "Standard_DS1_v2"
+    size                  = "Standard_D2als_v6"
     admin_username        = "adminuser"
     admin_password        = var.vm_password
     network_interface_ids = [azurerm_network_interface.example.id]
