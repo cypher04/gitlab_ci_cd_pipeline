@@ -5,10 +5,11 @@
 #   to = module.networking.cicd-resource-group
 # }
 
+
+
 module "compute" {
   source      = "../../modules/compute"
   location    = var.location
-  vm_password = var.vm_password
   subnet_ids  = module.networking.subnet_ids
 }
 
