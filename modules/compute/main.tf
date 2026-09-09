@@ -31,6 +31,7 @@ resource "azurerm_linux_virtual_machine" "infra_vm" {
     admin_username        = "adminuser"
     admin_password        = var.vm_password
     network_interface_ids = [azurerm_network_interface.example.id]
+    disable_password_authentication = false
 
     os_disk {
       caching              = "ReadWrite"
