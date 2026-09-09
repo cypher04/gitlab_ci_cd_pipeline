@@ -5,9 +5,10 @@
 #   to = module.networking.cicd-resource-group
 # }
 module "compute" {
-  source     = "../../modules/compute"
-  location   = var.location
-  subnet_ids = module.networking.subnet_ids
+  source               = "../../modules/compute"
+  location             = var.location
+  admin_ssh_public_key = var.admin_ssh_public_key
+  subnet_ids           = module.networking.subnet_ids
 }
 
 module "networking" {

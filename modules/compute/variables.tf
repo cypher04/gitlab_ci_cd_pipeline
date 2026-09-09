@@ -13,3 +13,8 @@ variable "subnet_ids" {
   description = "The ID of the subnet where the network interface will be created"
   type        = list(string)
 }
+
+variable "admin_ssh_public_key" {
+  description = "The admin SSH public key for the Linux virtual machine"
+  type        = string
+}

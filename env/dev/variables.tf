@@ -24,3 +24,8 @@ variable "resource_group_name" {
 #   type        = string
 #   sensitive   = true
 # }
+
+variable "admin_ssh_public_key" {
+  description = "The SSH public key for the virtual machine administrator."
+  type        = string
+}

@@ -40,7 +40,7 @@ resource "azurerm_linux_virtual_machine" "infra_vm" {
 
     admin_ssh_key {
       username   = "adminuser"
-      public_key = file("~/.ssh/id_rsa.pub")
+      public_key = var.admin_ssh_public_key
     }
 
     source_image_reference {
