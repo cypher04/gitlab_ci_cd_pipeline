@@ -19,8 +19,8 @@ variable "resource_group_name" {
   type        = string
 }
 
-variable "vm_password" {
-  description = "The password for the virtual machines."
-  type        = string
-  sensitive   = true
-}
+# variable "vm_password" {
+#   description = "The password for the virtual machines."
+#   type        = string
+#   sensitive   = true
+# }

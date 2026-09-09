@@ -34,10 +34,10 @@ resource "gitlab_project_variable" "azure_client_id_variable" {
 }
 
 
-resource "gitlab_project_variable" "vm_password_variable" {
-  project   = data.gitlab_project.gitlab_project.id
-  key       = "TF_VAR_vm_password"
-  value     = var.vm_password
-  protected = true
-  masked    = false
-}
+# resource "gitlab_project_variable" "vm_password_variable" {
+#   project   = data.gitlab_project.gitlab_project.id
+#   key       = "TF_VAR_vm_password"
+#   value     = var.vm_password
+#   protected = true
+#   masked    = false
+# }
