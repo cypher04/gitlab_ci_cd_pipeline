@@ -29,13 +29,18 @@ resource "azurerm_linux_virtual_machine" "infra_vm" {
     location              = azurerm_resource_group.compute-rg.location
     size                  = "Standard_D2als_v6"
     admin_username        = "adminuser"
-    admin_password        = var.vm_password
+    admin_password        = null
     network_interface_ids = [azurerm_network_interface.example.id]
-    disable_password_authentication = false
+    disable_password_authentication = true
 
     os_disk {
       caching              = "ReadWrite"
       storage_account_type = "Standard_LRS"
+    }
+
+    admin_ssh_key {
+      username   = "adminuser"
+      public_key = file("~/.ssh/id_rsa.pub")
     }
 
     source_image_reference {

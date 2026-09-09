@@ -34,7 +34,7 @@ variable "subscription_id" {
   type        = string
 }
 
-variable "vm_password" {
-  description = "The password for the virtual machine."
-  type        = string
-}
+# variable "vm_password" {
+#   description = "The password for the virtual machine."
+#   type        = string
+# }
