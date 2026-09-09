@@ -4,13 +4,10 @@
 #   id = "/subscriptions/fe797b99-c79d-4fe3-baa0-091bacc96c3a/resourceGroups/cicd-resource-group"
 #   to = module.networking.cicd-resource-group
 # }
-
-
-
 module "compute" {
-  source      = "../../modules/compute"
-  location    = var.location
-  subnet_ids  = module.networking.subnet_ids
+  source     = "../../modules/compute"
+  location   = var.location
+  subnet_ids = module.networking.subnet_ids
 }
 
 module "networking" {
