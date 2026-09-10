@@ -11,7 +11,7 @@ resource "azurerm_resource_group" "compute-rg" {
 // network interface configuration
 resource "azurerm_network_interface" "example" {
   name                = "infra-vm-nic"
-  location            = azurerm_resource_group.compute-rg.location
+  location            = var.location
   resource_group_name = azurerm_resource_group.compute-rg.name
 
   ip_configuration {
@@ -24,9 +24,9 @@ resource "azurerm_network_interface" "example" {
 // linux virtual machine configuration
 
 resource "azurerm_linux_virtual_machine" "infra_vm" {
-    name                = "infra-vm"
+    name                  = "infra-vm"
     resource_group_name   = azurerm_resource_group.compute-rg.name
-    location              = azurerm_resource_group.compute-rg.location
+    location              = var.location
     size                  = "Standard_D2als_v6"
     admin_username        = "adminuser"
     admin_password        = null
@@ -50,4 +50,19 @@ resource "azurerm_linux_virtual_machine" "infra_vm" {
       version   = "latest"
 
     }
+}
+
+// deploy bastion host
+
+resource "azurerm_bastion_host" "vm_bastion" {
+  name                = "vm-bastion"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.compute-rg.name
+
+
+  ip_configuration {
+    name                 = "internal"
+    subnet_id            = var.subnet_ids[0]
+    public_ip_address_id = var.bastion_public_ip_id
+  }
 }
