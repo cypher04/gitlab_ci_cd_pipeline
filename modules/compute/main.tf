@@ -62,7 +62,7 @@ resource "azurerm_bastion_host" "vm_bastion" {
 
   ip_configuration {
     name                 = "internal"
-    subnet_id            = var.subnet_ids[0]
+    subnet_id            = var.subnet_ids[3]
     public_ip_address_id = var.bastion_public_ip_id
   }
 }
