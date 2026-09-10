@@ -9,7 +9,7 @@ module "compute" {
   location             = var.location
   admin_ssh_public_key = var.admin_ssh_public_key
   subnet_ids           = module.networking.subnet_ids
-  bastion_public_ip_id = module.networking.bastion_pip_id
+  bastion_public_ip_id = module.networking.bastion_public_ip_id
 }
 
 module "networking" {
