@@ -18,3 +18,8 @@ variable "admin_ssh_public_key" {
   description = "The admin SSH public key for the Linux virtual machine"
   type        = string
 }
+
+variable "bastion_public_ip_id" {
+  description = "The ID of the public IP address for the bastion host"
+  type        = string
+}

@@ -35,3 +35,19 @@ resource "azurerm_subnet" "app" {
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes     = [var.subnet_prefixes["app"]]
 }
+
+resource "azurerm_subnet" "AzureBastionSubnet" {
+  name                 = "AzureBastionSubnet"
+  resource_group_name  = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes     = [var.subnet_prefixes["bastion"]]
+}
+
+// bastion public IP
+resource "azurerm_public_ip" "bastion_pip" {
+  name                = "cicd-bastion-public-ip"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.rg.name
+  allocation_method   = "Static"
+  sku                 = "Standard"
+}
