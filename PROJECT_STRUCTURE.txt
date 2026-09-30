@@ -1,55 +1,92 @@
-web_app_with_database_infra/
-├── .gitignore
-├── README.md
-├── ARCHITECTURE.md
-├── PROJECT_STRUCTURE.txt
+PROJECT STRUCTURE
+=================
+
+gitlab_ci_cd_pipeline/
 │
-├── env/
-│   ├── dev/
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   ├── outputs.tf
-│   │   ├── providers.tf
-│   │   ├── backend.tf
-│   │   └── terraform.tfvars
-│   │
-│   ├── stage/
-│   │   ├── main.tf
-│   │   ├── variables.tf
-│   │   ├── outputs.tf
-│   │   ├── providers.tf
-│   │   ├── backend.tf
-│   │   └── terraform.tfvars
-│   │
-│   └── prod/
-│       ├── main.tf
-│       ├── variables.tf
-│       ├── outputs.tf
-│       ├── providers.tf
-│       ├── backend.tf
-│       └── terraform.tfvars
+├── .gitlab-ci.yml              pipeline: validate -> plan -> apply -> destroy
+├── .gitignore                  ignores *.tfvars, EXCEPT env/*/*.auto.tfvars
+├── README.md                   what this is, setup, day-to-day
+├── ARCHITECTURE.md             how it is put together, and why
+├── TRAFFIC_FLOW.md             control-plane and data-plane traffic
+├── PROJECT_STRUCTURE.txt       this file
 │
-└── modules/
-    ├── compute/
-    │   ├── main.tf
-    │   ├── variables.tf
-    │   ├── output.tf
-    │   └── README.md
-    │
-    ├── database/
-    │   ├── main.tf
-    │   ├── variables.tf
-    │   ├── outputs.tf
-    │   └── README.md
-    │
-    ├── networking/
-    │   ├── main.tf
-    │   ├── variables.tf
-    │   ├── outputs.tf
-    │   └── README.md
-    │
-    └── security/
-        ├── main.tf
-        ├── variables.tf
-        ├── outputs.tf
-        └── README.md
+├── backend/                    STACK 1 - remote state bootstrap
+│   │                           applied by a human, once. keeps LOCAL state,
+│   │                           because it creates the remote backend itself.
+│   ├── main.tf                 resource group, storage account (prevent_destroy,
+│   │                           versioned, 30-day soft delete), tfstate container
+│   ├── providers.tf            azurerm ~> 4.80
+│   └── outputs.tf
+│
+├── gitlab/                     STACK 2 - pipeline identity and GitLab config
+│   │                           applied by a HUMAN, never by CI. it owns the
+│   │                           identity that grants CI its access.
+│   ├── identity.tf             Entra app registration, service principal,
+│   │                           federated identity credential (OIDC trust)
+│   ├── roles.tf                RBAC: Contributor (subscription),
+│   │                           Storage Blob Data Contributor (state account)
+│   ├── gitlab.tf               GitLab project data source, environment,
+│   │                           branch protection
+│   ├── variables_gitlab.tf     GitLab CI/CD variables (client id, tenant,
+│   │                           subscription, token)
+│   ├── variables.tf            inputs (token + ids supplied via TF_VAR_*)
+│   ├── providers.tf            azurerm ~> 4.80, azuread ~> 3.9, gitlab ~> 19.3
+│   ├── backend.tf              state key: gitlab-terraform.tfstate
+│   └── terraform.tfvars        GITIGNORED - holds the GitLab PAT
+│
+├── env/                        STACK 3 - the deployed environments
+│   │
+│   ├── dev/                    the only environment that is built
+│   │   ├── main.tf             wires the networking and compute modules
+│   │   ├── variables.tf
+│   │   ├── dev.auto.tfvars     COMMITTED - non-secret values only
+│   │   │                       (region, CIDRs, SSH PUBLIC key)
+│   │   ├── providers.tf        azurerm ~> 4.80
+│   │   ├── backend.tf          state key: terraform.tfstate
+│   │   └── outputs.tf
+│   │
+│   ├── stage/                  SCAFFOLD - files exist but are empty
+│   └── prod/                   SCAFFOLD - files exist but are empty
+│
+├── modules/
+│   ├── networking/             BUILT
+│   │                           resource group cicd-resource-group,
+│   │                           VNet 10.0.0.0/16, four /24 subnets
+│   │                           (web, app, database, AzureBastionSubnet),
+│   │                           Bastion public IP.
+│   │                           NOTE: exports subnet_ids as a POSITIONAL list.
+│   │
+│   ├── compute/                BUILT
+│   │                           resource group compute-rg, NIC, Ubuntu 22.04
+│   │                           Gen2 VM (Standard_D2als_v6, SSH key only,
+│   │                           no public IP), Azure Bastion host.
+│   │
+│   ├── database/               NOT IMPLEMENTED - empty files
+│   └── security/               NOT IMPLEMENTED - empty files
+│                               (NSGs belong here; none exist yet)
+│
+└── workspace/                  VS Code workspace files
+
+
+APPLY ORDER
+===========
+
+    backend/  ->  gitlab/  ->  env/dev/
+    (human)       (human)      (pipeline)
+
+Each stack depends on the one before it. A change under gitlab/ does not take
+effect until a human runs `terraform -chdir=gitlab apply` - committing and
+pushing it is not enough, because CI never applies that stack.
+
+
+STATE
+=====
+
+    backend/    local file       backend/terraform.tfstate  (back this up)
+    gitlab/     azurerm backend  gitlab-terraform.tfstate
+    env/dev/    azurerm backend  terraform.tfstate
+    env/stage   not configured
+    env/prod    not configured
+
+All remote state lives in the tfstate container of the storage account created
+by the backend/ stack.
